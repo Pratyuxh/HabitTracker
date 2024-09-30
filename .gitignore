@@ -1,0 +1,46 @@
+# Ignore MacOS specific directories
+*.DS_Store
+*.localized
+.Trash/
+
+# Ignore Python and PyCharm directories
+*.pyc
+__pycache__/
+.python_history
+.pyenv/
+.spyder-py3/
+
+# Ignore system files and settings
+.bash_history
+.config/
+.dbclient/
+.gitconfig
+.mongodb/
+.npm/
+.npmrc
+.nuget/
+.oracle_jre_usage/
+.p2/
+.pgadmin/
+.pub-cache/
+.redhat/
+.ssh/
+.sts4/
+.swiftpm/
+.vscode/
+.zshrc
+.zsh_sessions/
+.zsh_history
+.zprofile
+.zprofile.pysave
+.zschrc
+
+# Ignore desktop and application files
+Desktop/
+Applications/
+Library/
+Music/
+Movies/
+Pictures/
+Public/
+Projects/

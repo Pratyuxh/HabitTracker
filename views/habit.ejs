@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="https://example.com/image.svg">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+    <title>Habit Tracker</title>
+
+    <style>
+        /* Additional CSS to enhance streaks display */
+        .streak-counter {
+            background-color: #f8f9fa;
+            padding: 10px;
+            font-weight: bold;
+            color: #007bff;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .circular-progress {
+            width: 70px;
+            height: 70px;
+            background: #e9ecef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .value-container {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .fa-circle-check {
+            color: green;
+        }
+
+        .fa-circle-xmark {
+            color: red;
+        }
+
+        .fa-circle-minus {
+            color: #ffcc00;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Heading -->
+    <div style="margin-top: 40px ;">
+        <h1 class="text-center" style="color: #222; font-weight: 700; font-size: 3rem;">
+            <img src="/assets/Images/logo.png" alt="cross" width="70" height="70"
+                class=" rounded-circle me-3">Habit Tracker
+        </h1>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 ">
+                <!-- Add Habit Section -->
+                <div class="modal-dialog modal-lg shadow-sm border-0" style="margin-bottom: 20px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add a Habit</h5>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/habit" method="POST">
+                                <label for="habit-name" class="col-form-label f-bold">Habit Name</label>
+                                <input type="text" class="form-control input-here shadow-none" id="habit-name"
+                                    name="content" placeholder="Enter here..." autocomplete="off">
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Add Habit </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Habit Streak Display Section -->
+        <div class="row justify-content-center mt-3 mb-5">
+            <% habit.forEach(habits => { 
+                let tzoffset = (new Date()).getTimezoneOffset() * 60000;
+                var today = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
+                
+                // Calculate the streak for the habit
+                let streak = 0;
+                let isCompleted = true;
+                for (let i = habits.dates.length - 1; i >= 0; i--) {
+                    if (habits.dates[i].complete === 'yes' && isCompleted) {
+                        streak++;
+                    } else {
+                        isCompleted = false;
+                    }
+                }
+            %>
+            <div class="col-md-8">
+                <div class='shadow-sm rounded mt-3 p-4 bg-white'>
+                    <div>
+                        <span class="card-header mt-2 rounded">
+                            <%= habits.content %>
+                        </span>
+            
+                        <% 
+                            // Initialize streak counters
+                            let currentStreak = 0;
+                            let highestStreak = 0;
+                            let tempStreak = 0; // Temporary variable to calculate highest streak
+            
+                            // Loop through the habit dates in reverse order
+                            for (let i = habits.dates.length - 1; i >= 0; i--) {
+                                const isComplete = habits.dates[i].complete === 'yes';
+            
+                                // If the habit is completed
+                                if (isComplete) {
+                                    currentStreak++; // Increment current streak
+                                    tempStreak++; // Increment temporary streak for highest streak
+                                } else {
+                                    // If a day is incomplete
+                                    highestStreak = Math.max(highestStreak, tempStreak); // Update highest streak if needed
+                                    tempStreak = 0; // Reset temp streak
+                                }
+                            }
+            
+                            // Final check to update highest streak if the last days are all complete
+                            highestStreak = Math.max(highestStreak, tempStreak);
+                        %>
+            
+                        <!-- Display Current Streak -->
+                        <div class="streak-counter">
+                            Current Streak: <%= currentStreak %> <i class="bi bi-fire"></i>
+                        </div>
+            
+                        <!-- Display Highest Streak -->
+                        <div class="streak-counter">
+                            Highest Streak: <%= highestStreak %> <i class="bi bi-trophy-fill"></i>
+                        </div>
+                    </div>
+            
+                    <!-- Delete Habit -->
+                    <div class='float-end shadow-sm me-2 justify-content-center' style="margin-top: -30px;">
+                        <a href="/<%= habits._id %>" class='btn' id="button"><i class="bi bi-archive-fill icon"></i></a>
+                    </div>
+            
+                    <!-- Habit Days Section -->
+                    <div class="col-md-10 justify-content-center habit-days mt-3"
+                        style="margin-left: auto; margin-right: auto; width: 100%; padding-top: 30px;">
+                        <% days.forEach(day => { 
+                            let found = false, status = '';
+                            habits.dates.find(function (item) {
+                                if(item.date === day.date) {
+                                    found = true;
+                                    status = item.complete;
+                                }
+                            });
+                        %>
+                        <div>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <div class="circular-progress">
+                                                <div class="value-container">
+                                                    <%= day.day %> <br>
+                                                    <span><%= day.date.slice(-2) %></span>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+            
+                                <tbody>
+                                    <tr>
+                                        <td class="pb-3" style="text-align: center;">
+                                            <a href="habitStatus/?id=<%= habits._id %>&date=<%= day.date %>">
+                                                <% if(found && status === 'yes'){ %>
+                                                <abbr title="Click to mark Undone :(">
+                                                    <i class="fa-solid fa-circle-check fa-2x"></i>
+                                                </abbr>
+                                                <% } else if(found && status === 'no'){ %>
+                                                <abbr title="Click for Default Value">
+                                                    <i class="fa-sharp fa-solid fa-circle-xmark fa-2x"></i>
+                                                </abbr>
+                                                <% } else { %>
+                                                <abbr title="Click to mark Done!">
+                                                    <i class="fa-solid fa-circle-minus fa-2x"></i>
+                                                <% } %>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CSS for Styling the Streak Counters -->
+            <style>
+            .streak-counter {
+                background-color: #f8f9fa;
+                padding: 10px;
+                font-weight: bold;
+                color: #007bff;
+                font-size: 1.2rem;
+                border-radius: 5px;
+                margin-top: 10px;
+                text-align: center;
+            }
+            
+            .streak-counter i {
+                color: #ffcc00; /* Color for the icons (trophy, fire) */
+            }
+            
+            .circular-progress {
+                display: inline-block;
+                width: 70px;
+                height: 70px;
+                border-radius: 50%;
+                border: 5px solid #007bff;
+                text-align: center;
+                line-height: 60px;
+            }
+            
+            .value-container {
+                font-size: 18px;
+                font-weight: bold;
+                color: #007bff;
+            }
+            </style>
+                                       
+            <% }) %>
+        </div>
+    </div>
+
+    <!-- FontAwesome Icon Script -->
+    <script src="https://kit.fontawesome.com/d5635d350d.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap Scripts -->
+    <script>
+        $('[data-toggle="tooltip"]').tooltip({ 'placement': 'bottom' });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
+        integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
