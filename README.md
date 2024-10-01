@@ -1,4 +1,4 @@
-# Hosted URL - https://habit-tracker-hqty.onrender.com/
+# Hosted URL - https://habittracker-ceoa.onrender.com/
 
 This is a Habit Tracker  Project which is built using Nodejs, Ejs , CSS, Javascript , Bootstrap
 
@@ -10,6 +10,7 @@ This is a Habit Tracker  Project which is built using Nodejs, Ejs , CSS, Javascr
   - Mark as Undone
   - Toggle to Default - No action setting
   - Delete a habit
+  - Track a Habit Streak Current and Highest
 
 ## Folder Structure 
 - Index.js: Main JS file which connects to all modules, imports the different packages and is the first file which runs when the app is started
@@ -27,6 +28,6 @@ This is a Habit Tracker  Project which is built using Nodejs, Ejs , CSS, Javascr
 - mongoose<br/>
 - nodemon<br/>
 
-Hosted URL - https://habit-tracker-hqty.onrender.com/
+Hosted URL - https://habittracker-ceoa.onrender.com/
 
 

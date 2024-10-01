@@ -10,5 +10,3 @@ exports.connectMongoose =()=>{
     .then((e)=>console.log("Connected to Mongodb => Habit-Tracker"))
     .catch((e)=>console.log("Not Connect Mongodb", e));
 }
-
-// mongodb+srv://himadrinayak:12345@cluster0.h7n86ah.mongodb.net/
